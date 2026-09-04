@@ -26,5 +26,11 @@ public class EscolherPersonagem : MonoBehaviour
         PlayerPrefs.SetInt("PersonagemEscolhido", 1);
         PlayerPrefs.Save();
         painelSelecao.SetActive(false);
+
+        TesteMovimento jogador = FindFirstObjectByType<TesteMovimento>();
+        if (jogador != null){
+            jogador.AtualizarGenero();
+        }
+        painelSelecao.SetActive(false);
     }
 }
