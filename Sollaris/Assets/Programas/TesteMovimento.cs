@@ -4,6 +4,22 @@ public class TesteMovimento : MonoBehaviour
 
 {
     public float velocidade = 5f;
+    public SpriteRenderer spriteRenderer;
+    public Sprite spriteHomem;
+    public Sprite spriteMulher;
+
+    void Start(){
+        AtualizarGenero();
+    }
+    public void AtualizarGenero(){
+        string generoEscolhido = PlayerPrefs.GetString("GeneroPlayer", "Homem");
+        if(generoEscolhido == "Homem"){
+            spriteRenderer.sprite = spriteHomem;
+        }
+        else if (generoEscolhido == "Mulher"){
+            spriteRenderer.sprite = spriteMulher;
+        }
+    }
     void Update()
     {
         if (Input.GetKey(KeyCode.W)){
