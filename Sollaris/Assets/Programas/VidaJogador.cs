@@ -69,10 +69,10 @@ public class VidaJogador : MonoBehaviour
         }
 
 
-        private void Update(){
-            if(Input.GetKeyDown(KeyCode.Space)){
-                TomarDano(20f);
-            }
-        }
+        // private void Update(){
+        //     if(Input.GetKeyDown(KeyCode.Space)){
+        //         TomarDano(20f);
+        //     }
+        // }
     }
 
