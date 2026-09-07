@@ -1,15 +1,23 @@
 using UnityEngine;
-
+using System.Collections;
 public class TesteMovimento : MonoBehaviour
 
 {
     public float velocidade = 5f;
+    public float velocidadeDash = 15f;
+    public float duracaoDash = 0.5f;
+    public float recargaDash = 1f;
     public SpriteRenderer spriteRenderer;
     public Sprite spriteHomem;
     public Sprite spriteMulher;
+    private Collider2D playerCollider;
+    private Vector2 ultimaDirecaoDash = Vector2.right;
+    private bool realizandoDash = false;
+    private bool consegueDash = true;
 
     void Start(){
         AtualizarGenero();
+        playerCollider = GetComponent<Collider2D>();
     }
     public void AtualizarGenero(){
         string generoEscolhido = PlayerPrefs.GetString("GeneroPlayer", "Homem");
@@ -22,17 +30,36 @@ public class TesteMovimento : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKey(KeyCode.W)){
-            transform.Translate(Vector2.up * Time.deltaTime * velocidade);
+        Vector2 direcaoInput = Vector2.zero;
+        if(Input.GetKey(KeyCode.W)) direcaoInput.y = direcaoInput.y + 1f;
+        if(Input.GetKey(KeyCode.S)) direcaoInput.y = direcaoInput.y - 1f;
+        if(Input.GetKey(KeyCode.D)) direcaoInput.x = direcaoInput.x + 1f;
+        if(Input.GetKey(KeyCode.A)) direcaoInput.x = direcaoInput.x - 1f;
+        if(direcaoInput != Vector2.zero){
+            ultimaDirecaoDash = direcaoInput.normalized;
         }
-                if (Input.GetKey(KeyCode.S)){
-            transform.Translate(Vector2.down * Time.deltaTime * velocidade);
+        if(Input.GetKeyDown(KeyCode.LeftShift) && consegueDash){
+            StartCoroutine(DarDash());
         }
-                if (Input.GetKey(KeyCode.D)){
-            transform.Translate(Vector2.right * Time.deltaTime * velocidade);
+        if (realizandoDash){
+            transform.Translate(ultimaDirecaoDash * velocidadeDash * Time.deltaTime);
         }
-                if (Input.GetKey(KeyCode.A)){
-            transform.Translate(Vector2.left * Time.deltaTime * velocidade);
+        else{
+            transform.Translate(direcaoInput.normalized * velocidade * Time.deltaTime);
         }
+    }
+        private IEnumerator DarDash(){
+        consegueDash = false;
+        realizandoDash = true;
+        if(playerCollider != null){
+            playerCollider.isTrigger = true;
+        }
+        yield return new WaitForSeconds(duracaoDash);
+        if(playerCollider != null){
+            playerCollider.isTrigger = false;
+        }
+        realizandoDash = false;
+        yield return new WaitForSeconds(recargaDash);
+        consegueDash = true;
     }
 }
