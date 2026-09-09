@@ -14,8 +14,13 @@ public class TesteMovimento : MonoBehaviour
     private Vector2 ultimaDirecaoDash = Vector2.right;
     private bool realizandoDash = false;
     private bool consegueDash = true;
+    public ParticleSystem particulaDash;
+    public float emissaomaxima = 60f;
 
     void Start(){
+        if(particulaDash != null){
+            particulaDash.Stop();
+        }
         AtualizarGenero();
         playerCollider = GetComponent<Collider2D>();
     }
@@ -54,7 +59,20 @@ public class TesteMovimento : MonoBehaviour
         if(playerCollider != null){
             playerCollider.isTrigger = true;
         }
-        yield return new WaitForSeconds(duracaoDash);
+        if(particulaDash != null){
+            particulaDash.Play();
+        }
+        float tempoColapso = 0f;
+        ParticleSystem.EmissionModule emission = particulaDash.emission;
+        while(tempoColapso < duracaoDash){
+            tempoColapso = tempoColapso + Time.deltaTime;
+            float progresso = 1f - (tempoColapso / duracaoDash);
+            emission.rateOverTime = emissaomaxima * progresso;
+            yield return null;
+        }
+        if(particulaDash != null){
+            particulaDash.Stop();
+        }
         if(playerCollider != null){
             playerCollider.isTrigger = false;
         }
